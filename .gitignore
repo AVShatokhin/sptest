@@ -1,3 +1,9 @@
+x64
+*.sdf
+*.suo
+Debug
+*.opensdf
+
 # C++ objects and libs
 *.slo
 *.lo
