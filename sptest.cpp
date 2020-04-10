@@ -137,5 +137,5 @@ void sptest::_stop()
 
 void sptest::_sendFiscal()
 {
-	_splitter->sendFiscal(ui.fisIDspin->value(), ui.itemIDspin->value(), ui.sumSpin->value());
+	_splitter->sendFiscal((quint32)ui.fisIDspin->value(), (quint16)ui.sumSpin->value(), (quint16)ui.itemIDspin->value());
 }

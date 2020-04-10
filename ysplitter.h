@@ -9,7 +9,7 @@
 
 #define SPL_CMD_RESET   1
 #define SPL_CMD_POOL    2
-#define SPL_CMD_FISCAL  3
+#define SPL_CMD_FISCAL  4
 
 #define PACKET_SIZE 30
 #define PERIOD 300
@@ -19,8 +19,8 @@ class ysplitter : public QObject
 	Q_OBJECT
 	
 	union translate {
-		int in;
-		short b[4];
+		quint32 in;
+		quint8 b[4];
 	};
 
 
@@ -54,7 +54,7 @@ public:
 
 	splitter currentState;
 
-	int timeouts;
+	quint32 timeouts;
 
 private:
 	QSerialPort * _serial;
@@ -64,7 +64,7 @@ private:
 
 	void _closePort();
 
-	int  _calc_crc(QByteArray *buffer, quint8 cnt, quint8 fromPOS);
+	quint8  _calc_crc(QByteArray *buffer, quint8 cnt, quint8 fromPOS);
 
 	void _send();
 
@@ -76,24 +76,25 @@ private:
 
 	quint8 _state;
 
-	int _eq1;
-	int _eq2;
-	int _eq3;
-	int _eq4;
-	int _eq5;
+	quint16 _eq1;
+	quint16 _eq2;
+	quint16 _eq3;
+	quint16 _eq4;
+	quint16 _eq5;
 
 	quint32 _fisID;
 	quint16 _fisSum;
 	quint16 _fisItemID;
+
 	bool _fiscaling;
 	bool _pooling;
 	bool _running;
 	bool _waitingRequest;
 	
-	void _append2Byte(int value);
-	void _append4Byte(int value);
-	int  _get2Byte(int i);
-	int  _get4Byte(int i);
+	void _append2Byte(quint16 value);
+	void _append4Byte(quint32 value);
+	quint16  _get2Byte(quint8 i);
+	quint32  _get4Byte(quint8 i);
 
 
 private slots:

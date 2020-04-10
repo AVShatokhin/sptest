@@ -91,7 +91,7 @@ void ysplitter::_sendPool()
 	_send();
 }
 
-void ysplitter::_append2Byte(int value)
+void ysplitter::_append2Byte(quint16 value)
 {
 	translate __temp;
 	__temp.in = value;
@@ -99,7 +99,7 @@ void ysplitter::_append2Byte(int value)
 	_out_buffer.append(__temp.b[0]);
 }
 
-void ysplitter::_append4Byte(int value)
+void ysplitter::_append4Byte(quint32 value)
 {
 	translate __temp;
 	__temp.in = value;
@@ -109,24 +109,24 @@ void ysplitter::_append4Byte(int value)
 	_out_buffer.append(__temp.b[0]);
 }
 
-int ysplitter::_get2Byte(int i)
+quint16 ysplitter::_get2Byte(quint8 i)
 {
 	translate __temp;
-	__temp.b[0] = _in_buffer.at(i);
-	__temp.b[1] = _in_buffer.at(i-1);
+	__temp.b[0] = (quint8)_in_buffer.at(i);
+	__temp.b[1] = (quint8)_in_buffer.at(i - 1);
 	__temp.b[2] = 0;
 	__temp.b[3] = 0;
 
 	return __temp.in;
 }
 
-int ysplitter::_get4Byte(int i)
+quint32 ysplitter::_get4Byte(quint8 i)
 {
 	translate __temp;
-	__temp.b[0] = _in_buffer.at(i);
-	__temp.b[1] = _in_buffer.at(i - 1);
-	__temp.b[2] = _in_buffer.at(i - 2);
-	__temp.b[3] = _in_buffer.at(i - 3);
+	__temp.b[0] = (quint8)_in_buffer.at(i);
+	__temp.b[1] = (quint8)_in_buffer.at(i - 1);
+	__temp.b[2] = (quint8)_in_buffer.at(i - 2);
+	__temp.b[3] = (quint8)_in_buffer.at(i - 3);
 
 	return __temp.in;
 }
@@ -137,11 +137,17 @@ void ysplitter::_gotSerialData()
 		_in_buffer.append(_serial->read(PACKET_SIZE));
 	}
 
+	
 	if (_in_buffer.count() == PACKET_SIZE) {
+
+		//quint8 __tmp = _calc_crc(&_in_buffer, PACKET_SIZE - (2 + 1), 2 + 1);
+
+		quint8 __tmp = _calc_crc(&_in_buffer, PACKET_SIZE - 1, 2 + 1);
+
 		if ((_in_buffer.at(0) == 0x0d) && (_in_buffer.at(1) == 0x0a))
 		{
-			if (_in_buffer.at(29) == _calc_crc(&_in_buffer, PACKET_SIZE - (2 + 1), 2 + 1)) {
-
+			if ((quint8)_in_buffer.at(29) == _calc_crc(&_in_buffer, PACKET_SIZE - 1, 2 + 1)) {
+//			if ((quint8)_in_buffer.at(29) == (quint8)_in_buffer.at(29)) {
 				currentState.eq			= _get2Byte(5);
 				currentState.va			= _get2Byte(7);
 				currentState.coin		= _get2Byte(9);
@@ -158,11 +164,17 @@ void ysplitter::_gotSerialData()
 
 				currentState.fisID = _get4Byte(28);
 
+				if (currentState.fisID == _fisID) _fiscaling = false;
+				
+
 				emit gotNewData();
 				_pooling = true;
 				_waitingRequest = false;
 			}
 			else {
+				qDebug() << __tmp << "calc" ;
+				qDebug() << (quint8)_in_buffer.at(29) << "crc";
+
 				emit crcError();
 			}
 		}
@@ -221,7 +233,7 @@ void ysplitter::_send()
 	_waitingRequest = true;
 }
 
-int ysplitter::_calc_crc(QByteArray *buffer, quint8 cnt, quint8 fromPOS)
+quint8 ysplitter::_calc_crc(QByteArray *buffer, quint8 cnt, quint8 fromPOS)
 {
 	quint8 __crc = 0;
 	for (int i = fromPOS; i < cnt; i++) {
