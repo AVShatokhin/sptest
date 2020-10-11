@@ -7,9 +7,9 @@
 #include <QDebug>
 #include <QTimer>
 
-#define SPL_CMD_RESET   1
-#define SPL_CMD_POOL    2
-#define SPL_CMD_FISCAL  4
+#define SPL_CMD_RESET		1
+#define SPL_CMD_POOL		2
+#define SPL_CMD_FISCAL		4
 
 #define PACKET_SIZE 30
 #define PERIOD 300

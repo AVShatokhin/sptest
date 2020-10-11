@@ -72,15 +72,13 @@ void ysplitter::_sendFiscal()
 
 	_out_buffer.append(_calc_crc(&_out_buffer, _out_buffer.count(), 0));
 	_send();
-
 }
 
 void ysplitter::_sendPool()
 {
-
 	_out_buffer.clear();
 	_out_buffer.append(SPL_CMD_POOL);
-	
+
 	_append2Byte(_eq1);
 	_append2Byte(_eq2);
 	_append2Byte(_eq3);
@@ -133,21 +131,19 @@ quint32 ysplitter::_get4Byte(quint8 i)
 
 void ysplitter::_gotSerialData()
 {
+	int __packet_size = PACKET_SIZE;
+
 	while (_serial->bytesAvailable() > 0) {
-		_in_buffer.append(_serial->read(PACKET_SIZE));
+		_in_buffer.append(_serial->read(__packet_size));
 	}
 
-	
-	if (_in_buffer.count() == PACKET_SIZE) {
+	if (_in_buffer.count() == __packet_size) {
 
-		//quint8 __tmp = _calc_crc(&_in_buffer, PACKET_SIZE - (2 + 1), 2 + 1);
-
-		quint8 __tmp = _calc_crc(&_in_buffer, PACKET_SIZE - 1, 2 + 1);
+		quint8 __tmp = _calc_crc(&_in_buffer, __packet_size - 1, 2 + 1);
 
 		if ((_in_buffer.at(0) == 0x0d) && (_in_buffer.at(1) == 0x0a))
 		{
-			if ((quint8)_in_buffer.at(29) == _calc_crc(&_in_buffer, PACKET_SIZE - 1, 2 + 1)) {
-//			if ((quint8)_in_buffer.at(29) == (quint8)_in_buffer.at(29)) {
+			if ((quint8)_in_buffer.at(__packet_size-1) == _calc_crc(&_in_buffer, __packet_size - 1, 2 + 1)) {
 				currentState.eq			= _get2Byte(5);
 				currentState.va			= _get2Byte(7);
 				currentState.coin		= _get2Byte(9);
@@ -166,14 +162,13 @@ void ysplitter::_gotSerialData()
 
 				if (currentState.fisID == _fisID) _fiscaling = false;
 				
-
 				emit gotNewData();
 				_pooling = true;
 				_waitingRequest = false;
 			}
 			else {
 				qDebug() << __tmp << "calc" ;
-				qDebug() << (quint8)_in_buffer.at(29) << "crc";
+				qDebug() << (quint8)_in_buffer.at(__packet_size-1) << "crc";
 
 				emit crcError();
 			}

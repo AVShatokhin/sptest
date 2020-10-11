@@ -22,7 +22,7 @@
 #define VALID_STATUS 10
 #define COIN_STATUS 11
 #define FIS_ID 12
-
+#define COIN_PULSE 13
 
 class sptest : public QMainWindow
 {

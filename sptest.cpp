@@ -91,7 +91,7 @@ void sptest::gotNewData()
 	ui.tableWidget->item(COIN_STATUS, 0)->setTextAlignment(Qt::AlignVCenter | Qt::AlignHCenter);;
 
 	ui.tableWidget->setItem(FIS_ID, 0, new QTableWidgetItem(QString::number(_splitter->currentState.fisID)));
-	ui.tableWidget->item(FIS_ID, 0)->setTextAlignment(Qt::AlignVCenter | Qt::AlignHCenter);;
+	ui.tableWidget->item(FIS_ID, 0)->setTextAlignment(Qt::AlignVCenter | Qt::AlignHCenter);
 }
 
 void sptest::fiscalOK()
