@@ -87,6 +87,7 @@ void ysplitter::_sendPool()
 
 	_out_buffer.append(_calc_crc(&_out_buffer, _out_buffer.count(), 0));
 	_send();
+	
 }
 
 void ysplitter::_append2Byte(quint16 value)
